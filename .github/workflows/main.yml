@@ -1,0 +1,16 @@
+on:
+  schedule:
+    # Run every hour, on the hour. This can be customized to checking as frequently as every 5 minutes.
+    - cron:  '*/5 * * * *'
+
+name: Check for changes
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse data
+        id: parse_data
+        run: echo 'hello world' 
+        
+     
