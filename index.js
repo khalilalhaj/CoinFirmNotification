@@ -2,7 +2,6 @@ import fetch from "node-fetch";
 // import dotenv from "dotenv";
 // dotenv.config();
 
-
 const BITACESS_KEY = process.env.Bitacess_key;
 const COINFIRM_KEY = process.env.CoinFirm_key;
 
@@ -21,9 +20,7 @@ async function fetchAllReports() {
 
 function getCurrentCTDTime() {
   return new Date(
-    new Date().getTime() +
-      new Date().getTimezoneOffset() * 60000 +
-      3600000 * -5
+    new Date().getTime() + new Date().getTimezoneOffset() * 60000 + 3600000 * -5
   );
 }
 
@@ -69,6 +66,14 @@ async function postAMLReport(address) {
   }).catch((err) => console.log(err));
 }
 
+function monthDiff(d1, d2) {
+  var months;
+  months = (d2.getFullYear() - d1.getFullYear()) * 12;
+  months -= d1.getMonth();
+  months += d2.getMonth();
+  return months <= 0 ? 0 : months;
+}
+
 async function main() {
   let h = 10; //fetch all before 10 hours
   let transactions = await fetchTransactions(1000, h * 60);
@@ -83,9 +88,9 @@ async function main() {
       if (report["address"] == address) {
         //if exists
         const time = report["time"];
-        const reportMonth = new Date(time).getMonth() + 1;
-        const currentMonth = getCurrentCTDTime().getMonth() + 1;
-        return currentMonth - reportMonth > 6;
+        const reportMonth = new Date(time);
+        const currentMonth = getCurrentCTDTime();
+        return monthDiff(currentMonth, reportMonth) > 6;
       }
     }
     return true;
