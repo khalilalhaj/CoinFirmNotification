@@ -1,0 +1,20 @@
+on:
+  schedule:
+    - cron:  '*/30 * * * *'
+
+name: Shedule API calls
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-node@v2
+          with:
+            node-version: "16"
+        - run: npm install
+        - run: node index.js
+          env:
+            CI: true
+            Bitacess_key: ${{ secrets.BITACESS_KEY }}
+            CoinFirm_key: ${{ secrets.COINFIRM_KEY }}
