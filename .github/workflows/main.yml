@@ -8,7 +8,14 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Parse data
-        run: echo "hello world"
-        
+        - uses: actions/checkout@v2
+        - uses: actions/setup-node@v2
+          with:
+            node-version: "16"
+        - run: npm install
+        - run: node test.js
+          env:
+            Bitacess_key : $${{secrets.BITACESS_KEY}}
+            CoinFirm_key : ${{secrets.COINFIRM_KEY}}
+           
      
