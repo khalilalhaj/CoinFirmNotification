@@ -15,6 +15,7 @@ jobs:
         - run: npm install
         - run: node test.js
           env:
+            CI: true
             Bitacess_key : ${{ secrets.BITACESS_KEY }}
             CoinFirm_key : ${{ secrets.COINFIRM_KEY }}
            
