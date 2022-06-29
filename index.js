@@ -1,9 +1,10 @@
 import fetch from "node-fetch";
+// import dotenv from "dotenv";
+// dotenv.config();
 
-let MS_PER_MINUTE = 60000;
 
-let BITACESS_KEY = process.env.Bitacess_key;
-let COINFIRM_KEY = process.env.CoinFirm_key;
+const BITACESS_KEY = process.env.Bitacess_key;
+const COINFIRM_KEY = process.env.CoinFirm_key;
 
 async function fetchAllReports() {
   let headersList = {
@@ -21,20 +22,18 @@ async function fetchAllReports() {
 function getCurrentCTDTime() {
   return new Date(
     new Date().getTime() +
-      new Date().getTimezoneOffset() * MS_PER_MINUTE +
+      new Date().getTimezoneOffset() * 60000 +
       3600000 * -5
   );
 }
 
-async function fetchTransactions(limit = 10, durationInMinutes = 5) {
+async function fetchTransactions(limit, durationInMinutes) {
   //get current time, convert it to cdt
   let now = getCurrentCTDTime();
 
-  //   console.log(now.toTimeString());
+  console.log(now.toTimeString());
 
   now.setMinutes(now.getMinutes() - durationInMinutes);
-
-  //   console.log(now.toTimeString());
 
   let timestamp = now.getTime();
 
@@ -43,20 +42,18 @@ async function fetchTransactions(limit = 10, durationInMinutes = 5) {
   };
 
   let response = await fetch(
-    `https://work-api.bitaccessbtm.com/api/partner/v2/transactions?limit=${limit}`,
+    `https://work-api.bitaccessbtm.com/api/partner/v2/transactions?limit=${limit}&status=coins sent&start_time=${timestamp}`,
     {
       method: "GET",
       headers: headersList,
     }
   );
+
   return response.json();
 }
 
 function getAddresses(transactions) {
-  let addresses = transactions["transactions"]
-    .map((ele) => ele["public_key"])
-    .filter((ele) => ele != undefined);
-
+  let addresses = transactions["transactions"].map((ele) => ele["public_key"]);
   return [...new Set(addresses)];
 }
 
@@ -73,30 +70,31 @@ async function postAMLReport(address) {
 }
 
 async function main() {
-  console.log(BITACESS_KEY);
-  console.log(COINFIRM_KEY);
+  let h = 10; //fetch all before 10 hours
+  let transactions = await fetchTransactions(1000, h * 60);
 
-  // let h = 24;
-  // let transactions = await fetchTransactions(100, h * 60);
-  // let customersAddresses = getAddresses(transactions);
+  let customersAddresses = getAddresses(transactions);
+  // console.log(customersAddresses);
+  // console.log(customersAddresses.length);
 
-  // let reports = await fetchAllReports();
-  // let filteredAddresses = customersAddresses.filter((address) => {
-  //   for (const report of reports) {
-  //     if (report["address"] == address) {
-  //       //if exists
-  //       const time = report["time"];
-  //       const reportMonth = new Date(time).getMonth() + 1;
-  //       const currentMonth = getCurrentCTDTime().getMonth() + 1;
-  //       return currentMonth - reportMonth > 6;
-  //     }
-  //   }
-  //   return true;
-  // });
+  let reports = await fetchAllReports();
+  let filteredAddresses = customersAddresses.filter((address) => {
+    for (const report of reports) {
+      if (report["address"] == address) {
+        //if exists
+        const time = report["time"];
+        const reportMonth = new Date(time).getMonth() + 1;
+        const currentMonth = getCurrentCTDTime().getMonth() + 1;
+        return currentMonth - reportMonth > 6;
+      }
+    }
+    return true;
+  });
 
-  // for (const address of filteredAddresses.slice(0, 4)) {
-  //   await postAMLReport(address);
-  // }
+  for (const address of filteredAddresses) {
+    await postAMLReport(address);
+    console.log("address reported");
+  }
 }
 
 await main();
