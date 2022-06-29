@@ -13,7 +13,7 @@ jobs:
           with:
             node-version: "16"
         - run: npm install
-        - run: node test.js
+        - run: node index.js
           env:
             CI: true
             Bitacess_key: ${{ secrets.BITACESS_KEY }}
