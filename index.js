@@ -76,7 +76,7 @@ function monthDiff(d1, d2) {
 
 async function main() {
   let h = 10; //fetch all before 10 hours
-  let transactions = await fetchTransactions(10, h * 60);
+  let transactions = await fetchTransactions(1000, h * 60);
 
   let customersAddresses = getAddresses(transactions);
   // console.log(customersAddresses);
