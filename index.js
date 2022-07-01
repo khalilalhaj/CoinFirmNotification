@@ -60,10 +60,16 @@ async function postAMLReport(address) {
     Authorization: `Bearer ${COINFIRM_KEY}`,
   };
 
-  await fetch(`https://api.coinfirm.com/v3/reports/aml/standard/${address}`, {
+  try {
+    await fetch(`https://api.coinfirm.com/v3/reports/aml/standard/${address}`, {
     method: "GET",
     headers: headersList,
-  }).catch((err) => console.log(err.response));
+  });
+  } catch (error) {
+    console.error(error);
+  }
+
+  
 }
 
 function monthDiff(d1, d2) {
