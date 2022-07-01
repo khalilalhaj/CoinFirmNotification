@@ -63,7 +63,7 @@ async function postAMLReport(address) {
   await fetch(`https://api.coinfirm.com/v3/reports/aml/standard/${address}`, {
     method: "GET",
     headers: headersList,
-  }).catch((err) => console.log(err));
+  }).catch((err) => console.log(err.response));
 }
 
 function monthDiff(d1, d2) {
@@ -96,9 +96,10 @@ async function main() {
     return true;
   });
 
+  console.log(filteredAddresses.length," address will be posted");
+
   for (const address of filteredAddresses) {
     await postAMLReport(address);
-    console.log("address reported");
   }
 }
 
