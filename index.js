@@ -60,15 +60,13 @@ async function postAMLReport(address) {
     Authorization: `Bearer ${COINFIRM_KEY}`,
   };
 
-  try {
-    await fetch(`https://api.coinfirm.com/v3/reports/aml/standard/${address}`, {
+
+   const resp =  await fetch(`https://api.coinfirm.com/v3/reports/aml/standard/${address}`, {
     method: "GET",
     headers: headersList,
   });
-  } catch (error) {
-    console.log(error);
-  }
-
+  
+  console.log(resp.status);
   
 }
 
