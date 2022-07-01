@@ -66,7 +66,7 @@ async function postAMLReport(address) {
     headers: headersList,
   });
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 
   
